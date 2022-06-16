@@ -21,6 +21,7 @@ void usage()
     %s -u \"https://example.com\" -O\n",
          PROGRAM_NAME, PROGRAM_NAME, PROGRAM_NAME);
 }
+
 static int verbose;
 
 static struct option long_options[] =
@@ -43,12 +44,14 @@ int main(int argc, char *argv[])
   char output_file[256] = "NULL_NOFILE_PROVIDED";
 
   int options;
+  int options_index;
   // put ':' at the starting of the string so compiler can distinguish between '?' and ':'
-  while ((options = getopt(argc, argv, "hOo:u:")) != -1)
-  { // get option from the getopt() method
+
+  /* Parsing the command line arguments. */
+  while ((options = getopt_long(argc, argv, ":hOo:u:", long_options, &options_index)) != -1)
+  {
     switch (options)
     {
-    // For option i, r, l, print that these are options
     case 'h':
       usage();
       return (0);
@@ -56,11 +59,11 @@ int main(int argc, char *argv[])
     case 'o':
       sprintf(output_file, "%s", optarg);
       break;
-    case 'u': // here f is used for some file name
+    case 'u': 
       sprintf(url, "%s", optarg);
       break;
     case ':':
-      fprintf(stderr, "option %c needs a v;alue\n", options);
+      fprintf(stderr, "option %c needs a value\n", options);
       return (2);
       break;
     case '?': // used for some unknown options
@@ -69,11 +72,15 @@ int main(int argc, char *argv[])
     }
   }
 
+  /* Checking if the url is the default value, if it is then it will die with the message "No URL
+  supplied!" and exit with a status of 1. */
   if (strcmp(url, defualt_url_value) == 0)
   {
     die("No URL supplied!", 1);
   }
 
+  /* Checking if the output_file is the default value, if it is not then it will call the
+  save_get_request function. */
   if (strcmp(output_file, defualt_output_file_value) != 0)
   {
     return (save_get_request(url, output_file));
@@ -81,3 +88,5 @@ int main(int argc, char *argv[])
 
   return (print_get_request(url));
 }
+
+

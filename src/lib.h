@@ -1,5 +1,6 @@
 #ifndef HEADER_FILE
 #define HEADER_FILE
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -14,10 +15,10 @@
  * @param code The exit code to use. If you don't specify one, the program will exit with a status of
  * 1.
  */
-void die(char message[], int code)
+void die(const char message[], const int code)
 {
+  /* Printing the error message to the standard error output and exiting the program with the exit code. */
   fprintf(stderr, "error: %s\n", message);
-  
   exit(code);
 }
 
@@ -28,9 +29,11 @@ void die(char message[], int code)
  *
  * @return The contents of the file.
  */
-char chars_from_file(char filename[])
+char chars_from_file(const char filename[])
 {
   char contents;
+
+  /* Opening the file and assigning it to the file pointer. */
   FILE *fileptr;
   fileptr = fopen(filename, "r");
 
@@ -39,6 +42,7 @@ char chars_from_file(char filename[])
     exit(1);
   }
 
+  /* Reading the contents of the file and assigning it to the variable 'contents.' */
   fscanf(fileptr, "%s", &contents);
   return (contents);
 }
@@ -55,8 +59,10 @@ int print_get_request(const char url[1000])
     return (1);
   }
 
+  /* Initializing the curl library. */
   CURL *curl = curl_easy_init();
 
+  /* Checking if the curl library is initialized. If it is not, it prints an error message and returns 1. */
   if (!curl)
   {
     fprintf(stderr, "Couldn't initialize curl\n");
@@ -65,40 +71,60 @@ int print_get_request(const char url[1000])
 
   curl_easy_setopt(curl, CURLOPT_URL, url);
 
+  /* Setting the response to the curl request. */
   CURLcode response;
   response = curl_easy_perform(curl);
 
+  /* Checking if the response is not equal to CURLE_OK. If it is not, it prints an error message and returns 1. */
   if (response != CURLE_OK)
   {
     fprintf(stderr, "Couldn't get content from url \"%s\". Error: %s\n", url, curl_easy_strerror(response));
     return (1);
   }
 
+  /* Clean up the curl library. */
   curl_easy_cleanup(curl);
   return (0);
 }
 
+/**
+ * It takes a URL and a filename as arguments, and saves the content of the URL to the file
+ * 
+ * @param url The URL to get the content from.
+ * @param filename The name of the file to save the response to.
+ * 
+ * @return the status of the curl request.
+ */
 int save_get_request(const char url[1000], const char *filename)
 {
+  /* Initializing the curl library. */
   CURL *curl = curl_easy_init();
   
+  /* Checking if the curl library is initialized. If it is not, it prints an error message and returns 1. */
   if (!curl)
   {
     fprintf(stderr, "Couldn't initialize curl\n");
     return (1);
   }
 
+  /* Setting the URL to the curl request. */
   curl_easy_setopt(curl, CURLOPT_URL, url);
 
+  /* Opening the file and assigning it to the file pointer. */
   FILE *file = fopen(filename, "w");
+
+  /* Setting the response to the curl request. */
   CURLcode response;
   response = curl_easy_setopt(curl, CURLOPT_WRITEDATA, file);
+
+  /* Checking if the response is not equal to CURLE_OK. If it is not, it prints an error message and returns 1. */
   if (response != CURLE_OK)
   {
     fprintf(stderr, "Couldn't get content from url \"%s\". Error: %s\n", url, curl_easy_strerror(response));
     return (1);
   }
 
+  /* Closing the file and performing the curl request. */
   curl_easy_perform(curl);
   fclose(file);
 
