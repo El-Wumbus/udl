@@ -48,7 +48,7 @@ char chars_from_file(char filename[])
  *
  * @param url The URL to send the request to.
  */
-int print_get_request(char url[1000])
+int print_get_request(const char url[1000])
 {
   if (url == NULL)
   {
@@ -70,11 +70,38 @@ int print_get_request(char url[1000])
 
   if (response != CURLE_OK)
   {
-    fprintf(stderr, "Couldn't get content from url \"%s\". Error: %s", url, curl_easy_strerror(response));
+    fprintf(stderr, "Couldn't get content from url \"%s\". Error: %s\n", url, curl_easy_strerror(response));
     return (1);
   }
 
   curl_easy_cleanup(curl);
+  return (0);
+}
+
+int save_get_request(const char url[1000], const char *filename)
+{
+  CURL *curl = curl_easy_init();
+  
+  if (!curl)
+  {
+    fprintf(stderr, "Couldn't initialize curl\n");
+    return (1);
+  }
+
+  curl_easy_setopt(curl, CURLOPT_URL, url);
+
+  FILE *file = fopen(filename, "w");
+  CURLcode response;
+  response = curl_easy_setopt(curl, CURLOPT_WRITEDATA, file);
+  if (response != CURLE_OK)
+  {
+    fprintf(stderr, "Couldn't get content from url \"%s\". Error: %s\n", url, curl_easy_strerror(response));
+    return (1);
+  }
+
+  curl_easy_perform(curl);
+  fclose(file);
+
   return (0);
 }
 
