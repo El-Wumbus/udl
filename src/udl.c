@@ -105,5 +105,3 @@ int main(int argc, char *argv[])
 
   return (print_get_request(url));
 }
-
-

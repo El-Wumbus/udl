@@ -114,7 +114,8 @@ int print_get_request(const char url[1000])
  */
 int save_get_request(const char url[1000], const char *filename)
 {
-  /* Initializing the curl library. */
+  /* Initializing the curl lib
+  /* Checking if the response is not equal to CURLE_OK. If irary. */
   CURL *curl = curl_easy_init();
   
   /* Checking if the curl library is initialized. If it is not, it prints an error message and returns 1. */
@@ -134,7 +135,6 @@ int save_get_request(const char url[1000], const char *filename)
   CURLcode response;
   response = curl_easy_setopt(curl, CURLOPT_WRITEDATA, file);
 
-  /* Checking if the response is not equal to CURLE_OK. If it is not, it prints an error message and returns 1. */
   if (response != CURLE_OK)
   {
     fprintf(stderr, "Couldn't get content from url \"%s\". Error: %s\n", url, curl_easy_strerror(response));
