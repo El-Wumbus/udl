@@ -1,0 +1,28 @@
+# Maintainer: Aidan Neal <decator.c@proton.me>
+pkgname="udl-git"
+_pkgname="udl"
+pkgver=1
+pkgrel=1
+pkgdesc="udl. Make http(s) get requests in the command line'
+arch=("x86_64")
+url="https://github.com/el-wumbus/udl'
+license=("GPL3")
+provides=("udl")
+makedepends=("gcc")
+source=(udl::"git+https://github.com/el-wumbus/udl.git")
+sha256sums=("SKIP")
+
+pkgver() {
+  cd "$_pkgname"
+  printf "r%s.$s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+build() {
+  cd "$_pkgname"
+  make
+}
+
+package() {
+  cd "$_pkgname"
+  sudo make DESTDIR="${pkgdir}" install
+}
