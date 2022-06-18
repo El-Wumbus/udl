@@ -5,10 +5,10 @@ BIN = "dist/udl"
 defualt: build
 
 build: ${source}
-	mkdir -p dist
+	bash -c "mkdir -p dist"
 	${CC} -o ${BIN} src/udl.c ${CFLAGS}
 
-install: build
+install:
 	mkdir -p "${PREFIX}${DESTDIR}/usr/bin"
 	mkdir -p "${DESTDIR}${PREFIX}/usr/share/doc"
 	install -Dm755 dist/udl "${PREFIX}${DESTDIR}/usr/bin/udl"
